@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
-import { deleteComment, setCommentItem } from '../../store/commentsSlice';
+import { Comment, deleteComment, setCommentItem } from '../../store/commentsSlice';
 
-const CommentItem = ({ comment }) => {
+const CommentItem = ({ comment }: { comment: Comment }) => {
   const { id, author, content, createdAt, profile_url } = comment;
   const dispatch = useDispatch();
 
@@ -15,7 +15,7 @@ const CommentItem = ({ comment }) => {
   };
 
   return (
-    <CommentWrapper id={id}>
+    <CommentWrapper>
       <CommentHeader>
         <User>
           <span>{id}</span>

@@ -1,19 +1,21 @@
-import { useEffect } from 'react';
+import { useEffect, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { loadCommentDone, setCurrentPage } from '../../store/commentsSlice';
+import { CommentsSliceState, loadCommentDone, setCurrentPage } from '../../store/commentsSlice';
 import CommentItem from './CommentItem';
 import CommentForm from './CommentForm';
+import { RootState } from '../../store';
 
 const Home = () => {
   const dispatch = useDispatch();
 
-  const commentsData = useSelector(state => state.comments);
+  const commentsData = useSelector<RootState, CommentsSliceState>(state => state.comments);
+
   const { comments, currentPage, totalLegnth } = commentsData;
 
   const COUNT_PER_PAGE = 4;
 
-  let CurrnetDataArr = comments.slice(
+  const CurrnetDataArr = comments.slice(
     (currentPage - 1) * COUNT_PER_PAGE,
     currentPage * COUNT_PER_PAGE
   );
@@ -26,8 +28,8 @@ const Home = () => {
     dispatch(loadCommentDone());
   }, []);
 
-  const pageChange = e => {
-    const clickedNum = e.target.value;
+  const pageChange = (e: MouseEvent<HTMLButtonElement>) => {
+    const clickedNum = (e.target as HTMLButtonElement).value;
     dispatch(setCurrentPage(clickedNum));
   };
 

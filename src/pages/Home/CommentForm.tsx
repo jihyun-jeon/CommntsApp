@@ -1,7 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { postComment, putComment, setCommentItem } from '../../store/commentsSlice';
+import {
+  CommentsSliceState,
+  postComment,
+  putComment,
+  setCommentItem,
+  Comment,
+} from '../../store/commentsSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
 const CommentForm = () => {
   const dispatch = useDispatch();
@@ -12,15 +19,15 @@ const CommentForm = () => {
     createdAt: '',
   });
 
-  const { commentItem } = useSelector(state => state.comments);
+  const { commentItem } = useSelector<RootState, CommentsSliceState>(state => state.comments);
 
   useEffect(() => {
-    if (commentItem.id) {
+    if (commentItem && commentItem.id) {
       setCommentValue(commentItem);
     }
   }, [commentItem]);
 
-  const onChange = e => {
+  const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
 
     setCommentValue(prev => {
@@ -28,9 +35,13 @@ const CommentForm = () => {
     });
   };
 
-  const onClickBtn = buttonType => {
+  const onClickBtn = (buttonType: 'add' | 'cancel') => {
+    if (!commentItem) {
+      return;
+    }
+
     if (commentItem.id && buttonType === 'add') {
-      dispatch(putComment({ id: commentValue.id, commentValue }));
+      dispatch(putComment({ id: commentItem.id, commentValue }));
     }
 
     if (!commentItem.id && buttonType === 'add') {
@@ -78,7 +89,7 @@ const CommentForm = () => {
 
 export default CommentForm;
 
-const formSet = [
+const formSet: { type: string; placeholder: string; name: keyof Omit<Comment, 'id'> }[] = [
   { type: 'text', placeholder: 'https://picsum.photos/id/1/50/50', name: 'profile_url' },
   { type: 'text', placeholder: '작성자', name: 'author' },
   { type: 'textarea', placeholder: '내용', name: 'content' },
